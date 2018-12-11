@@ -1,7 +1,7 @@
 import re
 
 from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import Spider, CrawlSpider, Rule
+from scrapy.spiders import Spider, CrawlSpider, Rule, Request
 from slugify import slugify
 
 
@@ -36,6 +36,7 @@ class ParseSpider(Spider):
             'software_type': self.extract_software_type(response),
             'software_version': self.extract_software_version(response),
             'hardware_type': self.extract_hardware_type(response),
+            'popularity': response.meta.get('popularity')
         }
 
         return user_agent
@@ -93,8 +94,16 @@ class CrawlSpider(CrawlSpider):
 
     rules = [
         Rule(LinkExtractor(restrict_css=listings_css), callback='parse'),
-        Rule(LinkExtractor(restrict_css=user_agent_css), callback='parse_item'),
     ]
+
+    def parse(self, response):
+        yield from super().parse(response)
+
+        for row in response.css('.table-useragents tbody tr'):
+            popularity = clean(row.css('td ::text').extract())[-1].lower()
+            url = clean(row.css('td a::attr(href)').extract())[0]
+            yield response.follow(url, meta={'popularity': popularity}, callback=self.parse_item)
+
 
     def parse_item(self, response):
         return self.parse_spider.parse(response)
