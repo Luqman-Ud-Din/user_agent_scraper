@@ -1,7 +1,7 @@
 import re
 
 from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import Spider, CrawlSpider, Rule, Request
+from scrapy.spiders import Spider, CrawlSpider, Rule
 from slugify import slugify
 
 

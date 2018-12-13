@@ -72,7 +72,6 @@ ROBOTSTXT_OBEY = True
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    'user_agents.middlewares.UserAgentsDownloaderMiddleware': 543,
     'user_agents.middlewares.AutoProxyMiddleware': 300,
     'user_agents.middlewares.RandomUserAgentMiddleware': 400,
 }
