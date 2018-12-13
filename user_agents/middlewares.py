@@ -58,5 +58,5 @@ class AutoProxyMiddleware(object):
 class RandomUserAgentMiddleware(object):
 
     def process_request(self, request, spider):
-        request.headers["User-Agent"] = random.choice(settings.USER_AGENT_LIST)
+        request.headers["User-Agent"] = random.choice(settings.USER_AGENTS)
 

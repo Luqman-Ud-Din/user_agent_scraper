@@ -13,9 +13,9 @@ BOT_NAME = 'user_agents'
 
 SPIDER_MODULES = ['user_agents.spiders']
 NEWSPIDER_MODULE = 'user_agents.spiders'
-possible_proxies = []
+proxies = []
 
-USER_AGENT_LIST = [
+USER_AGENTS = [
     # IE 10
     "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)"
     "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
@@ -38,7 +38,7 @@ USER_AGENT_LIST = [
 #USER_AGENT = 'user_agents (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
