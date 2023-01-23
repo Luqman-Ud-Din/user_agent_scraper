@@ -17,11 +17,11 @@ def clean(lst_or_str):
     return lst_or_str
 
 
-class ParseSpider(Spider):
+class WhatIsMyBrowserParseSpider(Spider):
     name = 'whatismybrowser-parse'
     seen_user_agents = set()
 
-    def parse(self, response):
+    def parse(self, response, *args, **kwargs):
         user_agent = self.extract_user_agent(response)
 
         if self.is_seen_user_agent(user_agent):
@@ -50,7 +50,7 @@ class ParseSpider(Spider):
         self.seen_user_agents.add(_user_agent)
 
     def extract_user_agent(self, response):
-        return response.css('h1.useragent ::text').extract_first()
+        return response.css('h2.useragent ::text').extract_first()
 
     def extract_os_name(self, response):
         css = '.key:contains("Operating System Name Code") + .value ::text'
@@ -77,9 +77,9 @@ class ParseSpider(Spider):
         return clean(response.css(css).extract())[0]
 
 
-class CrawlSpider(CrawlSpider):
+class WhatIsMyBrowserCrawlSpider(CrawlSpider):
     name = 'whatismybrowser-crawl'
-    parse_spider = ParseSpider()
+    parse_spider = WhatIsMyBrowserParseSpider()
 
     allowed_domains = ['developers.whatismybrowser.com']
     start_urls = ['https://developers.whatismybrowser.com/useragents/explore/']
@@ -96,14 +96,13 @@ class CrawlSpider(CrawlSpider):
         Rule(LinkExtractor(restrict_css=listings_css), callback='parse'),
     ]
 
-    def parse(self, response):
-        yield from super().parse(response)
-
+    def parse(self, response, *args, **kwargs):
         for row in response.css('.table-useragents tbody tr'):
             popularity = clean(row.css('td ::text').extract())[-1].lower()
             url = clean(row.css('td a::attr(href)').extract())[0]
             yield response.follow(url, meta={'popularity': popularity}, callback=self.parse_item)
 
+        yield from self._requests_to_follow(response)
 
     def parse_item(self, response):
         return self.parse_spider.parse(response)
